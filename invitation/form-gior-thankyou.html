@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIOR - Confirmation</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: DM Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Applying custom font family */
+        body {
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        /* This style applies the background image and a gradient overlay. */
+        .mobile-view-container {
+            background-image: 
+                linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 60%), 
+                url('../imgs/img_gior_formresvp.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="bg-black min-h-screen flex items-center justify-center p-4 antialiased">
+
+    <div class="mobile-view-container w-full max-w-[420px] h-[844px] flex flex-col rounded-2xl overflow-hidden shadow-2xl">
+        
+        <div class="w-full h-full flex flex-col p-8 text-white">
+            <!-- Header with only the logo -->
+            <header class="w-full flex justify-end mb-8">
+                <img src="../imgs/logo_gior.png" alt="GIOR Logo" class="h-8 w-auto opacity-90">
+            </header>
+
+            <!-- Spacer to push content to the bottom -->
+            <div class="flex-grow"></div>
+
+            <main class="w-full">
+                <!-- Confirmation Text -->
+                <div class="mb-8 space-y-2">
+                    <h1 class="text-2xl font-bold">Thank you for confirming</h1>
+                    <p class="text-lg text-gray-200">We'll keep you updated on any event changes.</p>
+                    <p class="text-lg text-gray-200 pt-2">In the meantime, here's a sneak peek of what awaits you</p>
+                </div>
+
+                <!-- FIND OUT Button -->
+                <a href="#" class="w-full flex items-center justify-center bg-[#B08018] text-white text-base py-4 px-6 rounded-lg font-semibold hover:bg-[#9a6f15] transition-colors duration-300">
+                    <span>FIND OUT</span>
+                    <!-- Arrow Icon -->
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                </a>
+            </main>
+        </div>
+    </div>
+
+</body>
+</html>
