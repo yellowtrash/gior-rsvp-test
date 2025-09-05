@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GIOR - Reservation Details</title>
+  <title>GIOR - Reservation Details (Step 2)</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -25,7 +25,7 @@
       background-position: center;
     }
 
-    /* Unified form element style (inputs + selects + textarea) */
+    /* Inputs / textareas */
     .form-element{
       background-color:#FFFFFF;
       color:#333333;
@@ -35,9 +35,6 @@
       width:100%;
       font-size:16px;
       transition:border-color .2s ease-in-out;
-      -webkit-appearance:none;
-      -moz-appearance:none;
-      appearance:none;
       resize: vertical;
     }
     .form-element:focus{
@@ -47,15 +44,7 @@
     }
     .form-element::placeholder{ color:#9CA3AF; }
 
-    .form-element.invalid{ border-color:#EF4444; }
-    .form-element.invalid:focus{ box-shadow:0 0 0 2px rgba(239,68,68,.3); }
-
-    .error-message{
-      color:#F87171;
-      font-size:14px;
-      margin-top:4px;
-      min-height:1em; /* prevent layout shift */
-    }
+    .helper{ font-size:12px; color:rgba(255,255,255,.75); }
   </style>
 </head>
 
@@ -77,61 +66,83 @@
       <main class="w-full">
         <h1 class="text-2xl font-bold mb-6">A few final details</h1>
 
-        <!-- Only the two requested fields -->
         <form id="reservationForm" novalidate class="space-y-6">
-
-          <!-- 1) Allergies / dietary restrictions -->
+          <!-- Allergies / Dietary restrictions -->
           <div>
             <label for="allergies" class="block text-sm font-medium mb-2">
               Do you have any food allergies or dietary restrictions?
             </label>
-            <textarea id="allergies" name="allergies" rows="4" class="form-element"
+            <textarea id="allergies" name="allergies" rows="4" maxlength="600" class="form-element"
               placeholder="e.g., nut allergy, lactose-free, gluten-free, vegetarian, halal, none"></textarea>
-            <div id="allergiesError" class="error-message"></div>
+            <div class="flex justify-between mt-1">
+              <span class="helper">Optional</span>
+              <span class="helper"><span id="allergiesCount">0</span>/600</span>
+            </div>
           </div>
 
-          <!-- 2) Message / note -->
+          <!-- Message / Note -->
           <div>
-            <label for="message" class="block text-sm font-medium mb-2">
+            <label for="note" class="block text-sm font-medium mb-2">
               Any message or note for us?
             </label>
-            <textarea id="message" name="message" rows="4" class="form-element"
+            <textarea id="note" name="note" rows="4" maxlength="600" class="form-element"
               placeholder="Anything we should know to make your experience better"></textarea>
-            <div id="messageError" class="error-message"></div>
+            <div class="flex justify-between mt-1">
+              <span class="helper">Optional</span>
+              <span class="helper"><span id="noteCount">0</span>/600</span>
+            </div>
           </div>
 
           <div class="pt-2"></div>
 
-          <button type="submit" class="w-full flex items-center justify-center bg-[#B08018] text-white text-base py-4 px-6 rounded-lg font-semibold hover:bg-[#9a6f15] transition-colors duration-300">
-            <span>NEXT</span>
-          </button>
+          <!-- SINGLE primary button; no 'Back to details' -->
+          <a href="form-gior-review.html" id="nextBtn"
+             class="w-full flex items-center justify-center bg-[#B08018] text-white text-base py-4 px-6 rounded-lg font-semibold hover:bg-[#9a6f15] transition-colors duration-300 text-center">
+            NEXT
+          </a>
         </form>
       </main>
     </div>
   </div>
 
   <script>
+    // Keys used across steps
+    const K_ALLERGIES = 'allergies';
+    const K_NOTE = 'note';
+
     // Elements
-    const form = document.getElementById('reservationForm');
     const allergies = document.getElementById('allergies');
-    const message = document.getElementById('message');
+    const note = document.getElementById('note');
+    const nextBtn = document.getElementById('nextBtn');
+    const allergiesCount = document.getElementById('allergiesCount');
+    const noteCount = document.getElementById('noteCount');
 
-    // Optional: light validation (limit text length to keep submissions tidy)
-    const MAX_LEN = 600;
-    function trimToMax(el){
-      if(el.value.length > MAX_LEN) el.value = el.value.slice(0, MAX_LEN);
+    // Prefill from sessionStorage if returning
+    function get(key){ return sessionStorage.getItem(key) ?? ''; }
+    function set(key, val){ sessionStorage.setItem(key, val); }
+
+    function prefill(){
+      const a = get(K_ALLERGIES);
+      const n = get(K_NOTE);
+      if(a){ allergies.value = a; allergiesCount.textContent = a.length; }
+      if(n){ note.value = n; noteCount.textContent = n.length; }
     }
-    allergies.addEventListener('input', () => trimToMax(allergies));
-    message.addEventListener('input', () => trimToMax(message));
+    document.addEventListener('DOMContentLoaded', prefill);
 
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      // Both fields are optional; proceed directly
-      // If you later want to require allergies, uncomment below:
-      // if(!allergies.value.trim()){ /* show error and return */ }
+    // Persist on input + live counters
+    function handleInput(el, key, counterEl){
+      const v = el.value.slice(0, 600);
+      el.value = v;
+      set(key, v.trim());
+      counterEl.textContent = v.length;
+    }
+    allergies.addEventListener('input', () => handleInput(allergies, K_ALLERGIES, allergiesCount));
+    note.addEventListener('input', () => handleInput(note, K_NOTE, noteCount));
 
-      // Go to thank-you (or next step if you have one)
-      window.location.href = 'form-gior-thankyou.html';
+    // Ensure latest values saved before navigating
+    nextBtn.addEventListener('click', () => {
+      set(K_ALLERGIES, allergies.value.trim());
+      set(K_NOTE, note.value.trim());
     });
   </script>
 </body>
