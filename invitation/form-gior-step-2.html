@@ -45,25 +45,27 @@
     .form-element::placeholder{ color:#9CA3AF; }
 
     .helper{ font-size:12px; color:rgba(255,255,255,.75); }
+
+    /* Safe bottom padding for iOS notch, but keep it tidy on others */
+    .safe-bottom { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
   </style>
 </head>
 
 <body class="bg-black min-h-screen flex items-center justify-center p-4 antialiased">
   <div class="mobile-view-container w-full max-w-[420px] h-[844px] flex flex-col rounded-2xl overflow-hidden shadow-2xl">
-    <div class="w-full h-full flex flex-col p-8 text-white overflow-y-auto">
+    <!-- Make this a full-height flex column so we can push CTA to the bottom -->
+    <div class="flex h-full flex-col p-8 text-white overflow-y-auto">
       <header class="w-full flex justify-between items-center mb-8">
-        <!-- GO BACK -->
         <button type="button" onclick="history.back()" class="p-2 rounded-full hover:bg-white/10 transition-colors duration-200" aria-label="Go back">
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </button>
-
-        <!-- Logo -->
         <img src="../imgs/logo_gior.png" alt="GIOR Logo" class="h-8 w-auto opacity-90">
       </header>
 
-      <main class="w-full">
+      <!-- Content grows; CTA sits at bottom when content is short -->
+      <main class="flex-1">
         <h1 class="text-2xl font-bold mb-6">A few final details</h1>
 
         <form id="reservationForm" novalidate class="space-y-6">
@@ -92,32 +94,29 @@
               <span class="helper"><span id="noteCount">0</span>/600</span>
             </div>
           </div>
-
-          <div class="pt-2"></div>
-
-          <!-- SINGLE primary button; no 'Back to details' -->
-          <a href="form-gior-review.html" id="nextBtn"
-             class="w-full flex items-center justify-center bg-[#B08018] text-white text-base py-4 px-6 rounded-lg font-semibold hover:bg-[#9a6f15] transition-colors duration-300 text-center">
-            NEXT
-          </a>
         </form>
       </main>
+
+      <!-- CTA pinned to the bottom when there's no scroll -->
+      <div class="mt-auto safe-bottom">
+        <a href="form-gior-review.html" id="nextBtn"
+           class="w-full flex items-center justify-center bg-[#B08018] text-white text-base py-4 px-6 rounded-lg font-semibold hover:bg-[#9a6f15] transition-colors duration-300 text-center">
+          NEXT
+        </a>
+      </div>
     </div>
   </div>
 
   <script>
-    // Keys used across steps
     const K_ALLERGIES = 'allergies';
     const K_NOTE = 'note';
 
-    // Elements
     const allergies = document.getElementById('allergies');
     const note = document.getElementById('note');
     const nextBtn = document.getElementById('nextBtn');
     const allergiesCount = document.getElementById('allergiesCount');
     const noteCount = document.getElementById('noteCount');
 
-    // Prefill from sessionStorage if returning
     function get(key){ return sessionStorage.getItem(key) ?? ''; }
     function set(key, val){ sessionStorage.setItem(key, val); }
 
@@ -129,7 +128,6 @@
     }
     document.addEventListener('DOMContentLoaded', prefill);
 
-    // Persist on input + live counters
     function handleInput(el, key, counterEl){
       const v = el.value.slice(0, 600);
       el.value = v;
@@ -139,7 +137,6 @@
     allergies.addEventListener('input', () => handleInput(allergies, K_ALLERGIES, allergiesCount));
     note.addEventListener('input', () => handleInput(note, K_NOTE, noteCount));
 
-    // Ensure latest values saved before navigating
     nextBtn.addEventListener('click', () => {
       set(K_ALLERGIES, allergies.value.trim());
       set(K_NOTE, note.value.trim());

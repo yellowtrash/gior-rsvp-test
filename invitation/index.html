@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GIOR - Exclusive Food Tasting Invitation</title>
 
@@ -16,59 +16,54 @@
   <style>
     body { font-family: 'DM Sans', sans-serif; }
 
-    /* From /invitation/ go up one folder, then into /imgs/ */
-    .mobile-view-container {
+    /* Keep this exact background image filename (intentional typo) */
+    .mobile-view-container{
       background-image:
-        linear-gradient(to top, rgba(0,0,0,.8) 0%, rgba(0,0,0,0) 60%),
-        url('../imgs/img_gior_formresvp.jpg'); /* fixed filename & relative path */
+        linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.0) 60%),
+        url('../imgs/img_gior_formresvp.jpg');
       background-size: cover;
       background-position: center;
-      background-repeat: no-repeat;
     }
+
+    /* Safe area padding for iOS bottom inset */
+    .safe-bottom { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
   </style>
 </head>
 
 <body class="bg-black min-h-screen flex items-center justify-center p-4 antialiased">
+  <!-- Device frame -->
   <div class="mobile-view-container w-full max-w-[420px] h-[844px] flex flex-col rounded-2xl overflow-hidden shadow-2xl">
-    <div class="w-full h-full flex flex-col p-8">
-      <!-- Logo -->
+    <!-- Full-height column to anchor content at the bottom -->
+    <div class="flex h-full flex-col p-8 text-white overflow-y-auto">
+      <!-- Header -->
       <header class="w-full flex justify-end">
         <img src="../imgs/logo_gior.png" alt="GIOR Logo" class="h-8 w-auto opacity-80">
       </header>
 
-      <div class="flex-grow"></div>
-
-      <!-- Content -->
-      <main class="w-full text-white">
-        <!-- Opening copy -->
-        <div class="mb-6">
-          <h1 class="text-xl font-bold mb-4" style="font-size:20px; font-weight:700;">
-            Ehi, Gior Famiglia!
-          </h1>
-
-          <p class="text-base font-normal mb-2" style="font-size:16px; font-weight:400;">
+      <!-- Bottom stack: copy right above CTA, both sit at bottom when no scroll -->
+      <div class="mt-auto w-full safe-bottom">
+        <!-- Opening copy placed on the lower part of the page -->
+        <div class="mb-4">
+          <h1 class="text-xl font-bold mb-4">Ehi, Gior Famiglia!</h1>
+          <p class="text-base mb-2">
             Before the day begins in full light, there is a moment — soft, golden, and filled with promise.
           </p>
-          <p class="text-base font-normal mb-2" style="font-size:16px; font-weight:400;">
+          <p class="text-base mb-3">
             That is where we welcome you. Come taste, and share in the first whispers of our story before the new dawn arrives.
           </p>
+          <p class="text-base text-white/90">Confirm your place in our story.</p>
         </div>
 
-        <p class="text-base font-normal mb-4" style="font-size:16px; font-weight:400;">
-          Confirm your place in our story.
-        </p>
-
-        <!-- CTA -->
+        <!-- CTA pinned to the bottom when there’s no scroll -->
         <a href="form-gior-step-1.html"
-           class="w-full flex items-center justify-center bg-[#B08018] text-white text-base py-4 px-6 rounded-[4px] hover:bg-[#9a6f15] transition-colors duration-300"
-           style="font-size:16px; font-weight:600;"
+           class="w-full flex items-center justify-center bg-[#B08018] text-white text-base py-4 px-6 rounded-[4px] font-semibold hover:bg-[#9a6f15] transition-colors duration-300 text-center"
            aria-label="Your Seat Awaits">
-          <span>YOUR SEAT AWAITS</span>
-          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          YOUR SEAT AWAITS
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
           </svg>
         </a>
-      </main>
+      </div>
     </div>
   </div>
 </body>

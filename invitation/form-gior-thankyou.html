@@ -1,66 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIOR - Confirmation</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: DM Sans -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* Applying custom font family */
-        body {
-            font-family: 'DM Sans', sans-serif;
-        }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GIOR - Confirmation</title>
 
-        /* This style applies the background image and a gradient overlay. */
-        .mobile-view-container {
-            background-image: 
-                linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 60%), 
-                url('../imgs/img_gior_formresvp.jpg');
-            background-size: cover;
-            background-position: center;
-        }
-    </style>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: DM Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+
+    /* Keep this exact background image filename (intentional typo) */
+    .mobile-view-container{
+      background-image:
+        linear-gradient(to top, rgba(0,0,0,.8) 0%, rgba(0,0,0,.2) 60%),
+        url('../imgs/img_gior_formresvp.jpg');
+      background-size: cover;
+      background-position: center;
+    }
+
+    /* Safe area padding for iOS bottom inset */
+    .safe-bottom { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+  </style>
 </head>
+
 <body class="bg-black min-h-screen flex items-center justify-center p-4 antialiased">
+  <div class="mobile-view-container w-full max-w-[420px] h-[844px] flex flex-col rounded-2xl overflow-hidden shadow-2xl">
+    <!-- Full-height column: we'll push the content block to the lower part -->
+    <div class="flex h-full flex-col p-8 text-white overflow-y-auto">
+      <!-- Logo -->
+      <header class="w-full flex justify-end">
+        <img src="../imgs/logo_gior.png" alt="GIOR Logo" class="h-8 w-auto opacity-90">
+      </header>
 
-    <div class="mobile-view-container w-full max-w-[420px] h-[844px] flex flex-col rounded-2xl overflow-hidden shadow-2xl">
-        
-        <div class="w-full h-full flex flex-col p-8 text-white">
-            <!-- Header with only the logo -->
-            <header class="w-full flex justify-end mb-8">
-                <img src="../imgs/logo_gior.png" alt="GIOR Logo" class="h-8 w-auto opacity-90">
-            </header>
+      <!-- Spacer pushes the recap + text + CTA toward the lower part of the page -->
+      <div class="flex-1"></div>
 
-            <!-- Spacer to push content to the bottom -->
-            <div class="flex-grow"></div>
-
-            <main class="w-full">
-                <!-- Confirmation Text -->
-                <div class="mb-8 space-y-2">
-                    <h1 class="text-2xl font-bold">Thank you for confirming</h1>
-                    <p class="text-lg text-gray-200">We'll keep you updated on any event changes.</p>
-                    <p class="text-lg text-gray-200 pt-2">In the meantime, here's a sneak peek of what awaits you</p>
-                </div>
-
-                <!-- FIND OUT Button -->
-                <a href="#" class="w-full flex items-center justify-center bg-[#B08018] text-white text-base py-4 px-6 rounded-lg font-semibold hover:bg-[#9a6f15] transition-colors duration-300">
-                    <span>FIND OUT</span>
-                    <!-- Arrow Icon -->
-                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                    </svg>
-                </a>
-            </main>
+      <!-- Lower content stack (recap widget + copy) just above CTA -->
+      <section class="bg-white/10 backdrop-blur-md ring-1 ring-white/15 rounded-2xl shadow-xl p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/15">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <h1 class="text-xl font-bold">Thank you!</h1>
         </div>
-    </div>
 
+        <dl class="grid grid-cols-1 gap-3">
+          <div class="bg-white/5 rounded-lg p-3">
+            <dt class="text-xs uppercase tracking-wide text-white/60">Attendance Date</dt>
+            <dd id="vDate" class="text-sm font-medium text-white mt-1">—</dd>
+          </div>
+          <div class="bg-white/5 rounded-lg p-3">
+            <dt class="text-xs uppercase tracking-wide text-white/60">Guests</dt>
+            <dd id="vGuests" class="text-sm font-medium text-white mt-1">—</dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- Your copywriting kept on the lower part, right above the CTA -->
+      <section class="mb-4 space-y-2">
+        <h2 class="text-2xl font-bold">Thank you for confirming</h2>
+        <p class="text-lg text-gray-200">We'll keep you updated on any event changes.</p>
+        <p class="text-lg text-gray-200 pt-2">In the meantime, here's a sneak peek of what awaits you</p>
+      </section>
+
+      <!-- CTA pinned at the very bottom -->
+      <div class="mt-auto safe-bottom">
+        <a href="#"
+           class="w-full flex items-center justify-center bg-[#B08018] text-white text-base py-4 px-6 rounded-lg font-semibold hover:bg-[#9a6f15] transition-colors duration-300 text-center">
+          <span>FIND OUT</span>
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Populate recap from sessionStorage
+    const get = (k) => sessionStorage.getItem(k) ?? '';
+    const mapDate = (v) => ({
+      '22-sept':'22 Sept',
+      '23-sept':'23 Sept',
+      '24-sept':'24 Sept',
+      '25-sept':'25 Sept',
+      'unable':'Unable to Join'
+    }[v] || v || '—');
+    const pax = (v) => v ? `${v} pax` : '—';
+
+    document.getElementById('vDate').textContent   = mapDate(get('attendanceDate'));
+    document.getElementById('vGuests').textContent = pax(get('guestCount'));
+  </script>
 </body>
 </html>
