@@ -2,8 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GIOR - Reservation Form (Step 1)</title>
+  <!-- Better viewport for iOS safe areas -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<style>
+  /* Use dynamic viewport when available */
+  .h-visual { height: 100dvh; }
+
+  /* Fallback for browsers without dvh (older iOS Safari) */
+  @supports not (height: 100dvh) {
+    :root { --vh: 1vh; }
+    .h-visual { height: calc(var(--vh) * 100); }
+  }
+
+  /* Keep your safe-area padding helper */
+  .safe-bottom { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+</style>
+
+<script>
+  // Only needed for the fallback: set --vh to the real innerHeight
+  (function () {
+    function setVh() {
+      document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+    }
+    setVh();
+    window.addEventListener('resize', setVh);
+    window.addEventListener('orientationchange', setVh);
+  })();
+</script>
+
+  <title>GIOR - Review & Submit</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -15,8 +43,7 @@
 
   <style>
     body { font-family: 'DM Sans', sans-serif; }
-
-    /* Keep this exact filename (intentional typo) */
+    /* Keep this exact background image filename (intentional typo) */
     .mobile-view-container{
       background-image:
         linear-gradient(to top, rgba(0,0,0,.8) 0%, rgba(0,0,0,.2) 60%),
@@ -24,247 +51,110 @@
       background-size: cover;
       background-position: center;
     }
-
-    /* Unified form element style (inputs + selects) */
-    .form-element{
-      background-color:#FFFFFF;
-      color:#333333;
-      border-radius:8px;
-      padding:12px 16px;
-      border:1px solid transparent;
-      width:100%;
-      font-size:16px;
-      transition:border-color .2s ease-in-out;
-      -webkit-appearance:none;
-      -moz-appearance:none;
-      appearance:none;
-    }
-    .form-element:focus{
-      outline:none;
-      border-color:#B08018;
-      box-shadow:0 0 0 2px rgba(176,128,24,.3);
-    }
-    .form-element::placeholder{ color:#9CA3AF; }
-
-    .form-element.invalid{ border-color:#EF4444; }
-    .form-element.invalid:focus{ box-shadow:0 0 0 2px rgba(239,68,68,.3); }
-
-    /* Custom dropdown caret */
-    .select-wrapper{ position:relative; }
-    .select-wrapper::after{
-      content:'▼';
-      font-size:12px;
-      color:#6B7280;
-      position:absolute;
-      right:16px;
-      top:50%;
-      transform:translateY(-50%);
-      pointer-events:none;
-    }
-
-    .error-message{
-      color:#F87171;
-      font-size:14px;
-      margin-top:4px;
-      min-height:1em; /* prevent layout shift */
-    }
+    /* Safe area padding for iOS bottom inset */
+    .safe-bottom { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
   </style>
 </head>
 
 <body class="bg-black min-h-screen flex items-center justify-center p-4 antialiased">
-  <div class="mobile-view-container w-full max-w-[420px] h-[844px] flex flex-col rounded-2xl overflow-hidden shadow-2xl">
-    <div class="w-full h-full flex flex-col p-8 text-white overflow-y-auto">
+  <div class="mobile-view-container w-full max-w-[420px] h-visual flex flex-col rounded-2xl overflow-hidden shadow-2xl">
+    <!-- Full-height column so CTA can pin at the bottom when no scroll -->
+    <div class="flex h-full flex-col p-8 text-white overflow-y-auto">
       <header class="w-full flex justify-between items-center mb-8">
-        <!-- GO BACK -->
         <button type="button" onclick="history.back()" class="p-2 rounded-full hover:bg-white/10 transition-colors duration-200" aria-label="Go back">
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
         </button>
-
-        <!-- Logo -->
         <img src="../imgs/logo_gior.png" alt="GIOR Logo" class="h-8 w-auto opacity-90">
-        <!-- If your file contains a space, use: ../imgs/logo%20gior.png -->
       </header>
 
-      <main class="w-full">
-        <h1 class="text-2xl font-bold mb-6">Tell us a few details</h1>
+      <!-- Content grows; actions sit at bottom when content is short -->
+      <main class="flex-1">
+        <h1 class="text-2xl font-bold mb-2">Please review your details</h1>
+        <p class="text-white/80 mb-6">Make sure everything looks correct before submitting.</p>
 
-        <form id="reservationForm" novalidate class="space-y-6">
-          <!-- 1) Full Name (Required) -->
-          <div>
-            <label for="fullName" class="block text-sm font-medium mb-2">
-              Full Name <span class="opacity-80">(required)</span>
-            </label>
-            <input type="text" id="fullName" name="fullName" class="form-element" placeholder="Your full name" required>
-            <div id="fullNameError" class="error-message"></div>
-          </div>
-
-          <!-- 2) Phone Number (Required) -->
-          <div>
-            <label for="phone" class="block text-sm font-medium mb-2">
-              Phone Number <span class="opacity-80">(required)</span>
-            </label>
-            <input type="tel" id="phone" name="phone" class="form-element" placeholder="e.g., 081234567890" required>
-            <div id="phoneError" class="error-message"></div>
-          </div>
-
-          <!-- 3) Select your attendance date -->
-          <div>
-            <label for="attendanceDate" class="block text-sm font-medium mb-2">
-              Select your attendance date
-            </label>
-            <div class="select-wrapper">
-              <select id="attendanceDate" name="attendanceDate" class="form-element" required>
-                <option value="">Pick a date</option>
-                <option value="22-sept">22 Sept</option>
-                <option value="23-sept">23 Sept</option>
-                <option value="24-sept">24 Sept</option>
-                <option value="25-sept">25 Sept</option>
-                <option value="unable">Unable to Join</option>
-              </select>
+        <!-- Glass summary card -->
+        <section class="bg-white/10 backdrop-blur-md ring-1 ring-white/15 rounded-2xl shadow-xl p-5">
+          <dl class="space-y-4">
+            <div>
+              <dt class="text-xs uppercase tracking-wide text-white/70">Full Name</dt>
+              <dd id="vFullName" class="text-base font-medium text-white break-words mt-1">—</dd>
             </div>
-            <div id="attendanceDateError" class="error-message"></div>
-          </div>
-
-          <!-- 4) Number of guests attending (including yourself) 1–4 pax -->
-          <div id="guestBlock">
-            <label for="guestCount" class="block text-sm font-medium mb-2">
-              Number of guests attending (including yourself)
-            </label>
-            <div class="select-wrapper">
-              <select id="guestCount" name="guestCount" class="form-element" required>
-                <option value="">Choose 1–4 pax</option>
-                <option value="1">1 pax</option>
-                <option value="2">2 pax</option>
-                <option value="3">3 pax</option>
-                <option value="4">4 pax</option>
-              </select>
+            <div>
+              <dt class="text-xs uppercase tracking-wide text-white/70">Phone Number</dt>
+              <dd id="vPhone" class="text-base font-medium text-white break-words mt-1">—</dd>
             </div>
-            <div id="guestCountError" class="error-message"></div>
-          </div>
+            <div>
+              <dt class="text-xs uppercase tracking-wide text-white/70">Attendance Date</dt>
+              <dd id="vDate" class="text-base font-medium text-white break-words mt-1">—</dd>
+            </div>
+            <div>
+              <dt class="text-xs uppercase tracking-wide text-white/70">Number of Guests</dt>
+              <dd id="vGuests" class="text-base font-medium text-white break-words mt-1">—</dd>
+            </div>
+            <div>
+              <dt class="text-xs uppercase tracking-wide text-white/70">Allergies / Dietary Restriction</dt>
+              <dd id="vAllergies" class="text-base font-medium text-white whitespace-pre-wrap break-words mt-1">—</dd>
+            </div>
+          </dl>
+        </section>
 
-          <div class="pt-2"></div>
-
-          <button type="submit" class="w-full flex items-center justify-center bg-[#B08018] text-white text-base py-4 px-6 rounded-lg font-semibold hover:bg-[#9a6f15] transition-colors duration-300">
-            <span>NEXT</span>
-          </button>
-        </form>
+        <p class="text-white/70 text-sm mt-4">
+          If everything looks correct, kindly click submit to confirm your attendance.
+        </p>
       </main>
+
+      <!-- Actions stacked at the bottom -->
+      <div class="mt-auto safe-bottom space-y-3">
+        <!-- Link-only edit (above submit) -->
+        <a href="form-gior-step-1.html" class="text-white/80 hover:text-white text-sm underline underline-offset-2">
+          Edit details
+        </a>
+
+        <!-- Primary submit button -->
+        <button id="submitBtn" type="button"
+          class="w-full flex items-center justify-center bg-[#B08018] text-white text-base py-4 px-6 rounded-lg font-semibold hover:bg-[#9a6f15] transition-colors duration-300">
+          SUBMIT
+        </button>
+      </div>
     </div>
   </div>
 
   <script>
-    // Elements
-    const form = document.getElementById('reservationForm');
-    const fullNameInput = document.getElementById('fullName');
-    const phoneInput = document.getElementById('phone');
-    const attendanceDateSelect = document.getElementById('attendanceDate');
-    const guestCountSelect = document.getElementById('guestCount');
-    const guestBlock = document.getElementById('guestBlock');
+    // Helpers: sessionStorage + optional query fallback
+    function qs(key){ return new URL(window.location.href).searchParams.get(key); }
+    function get(key){ return sessionStorage.getItem(key) ?? qs(key) ?? ''; }
 
-    // Errors
-    const fullNameError = document.getElementById('fullNameError');
-    const phoneError = document.getElementById('phoneError');
-    const attendanceDateError = document.getElementById('attendanceDateError');
-    const guestCountError = document.getElementById('guestCountError');
+    // Mappers
+    const mapDate = v => ({'22-sept':'22 Sept','23-sept':'23 Sept','24-sept':'24 Sept','25-sept':'25 Sept','unable':'Unable to Join'}[v] || v || '—');
+    const mapGuests = v => (v ? `${v} pax` : '—');
 
-    // ---- Prefill from sessionStorage (if user came back from recap) ----
-    function get(key){ return sessionStorage.getItem(key) ?? ''; }
-    function set(key, val){ sessionStorage.setItem(key, val); }
-
-    function prefill(){
-      const name = get('fullName');
-      const phone = get('phone');
-      const date = get('attendanceDate');
-      const guests = get('guestCount');
-
-      if(name) fullNameInput.value = name;
-      if(phone) phoneInput.value = phone;
-      if(date){ attendanceDateSelect.value = date; }
-      if(guests){ guestCountSelect.value = guests; }
-
-      toggleGuestRequired();
-    }
-    document.addEventListener('DOMContentLoaded', prefill);
-
-    // ---- Validation helpers ----
-    function showError(el, msg, input){
-      el.textContent = msg;
-      if(input) input.classList.add('invalid');
-    }
-    function clearError(el, input){
-      el.textContent = '';
-      if(input) input.classList.remove('invalid');
-    }
-
-    const validateFullName = () => {
-      const v = fullNameInput.value.trim();
-      if(!v){ showError(fullNameError, 'Full name is required.', fullNameInput); return false; }
-      clearError(fullNameError, fullNameInput); return true;
+    // Gather data
+    const data = {
+      fullName: get('fullName') || get('name'),
+      phone: get('phone'),
+      attendanceDate: get('attendanceDate') || get('date'),
+      guestCount: get('guestCount'),
+      allergies: get('allergies') || ''
     };
 
-    const validatePhone = () => {
-      let v = phoneInput.value.replace(/[^0-9]/g, '');
-      phoneInput.value = v; // digits only
-      if(!v){ showError(phoneError, 'Phone number is required.', phoneInput); return false; }
-      if(v.length < 9 || v.length > 14){ showError(phoneError, 'Phone must be 9–14 digits.', phoneInput); return false; }
-      clearError(phoneError, phoneInput); return true;
-    };
+    // Populate UI
+    document.getElementById('vFullName').textContent = data.fullName || '—';
+    document.getElementById('vPhone').textContent = data.phone || '—';
+    document.getElementById('vDate').textContent = mapDate(data.attendanceDate);
+    document.getElementById('vGuests').textContent = mapGuests(data.guestCount);
+    document.getElementById('vAllergies').textContent = (data.allergies.trim() || '—');
 
-    const validateAttendanceDate = () => {
-      if(!attendanceDateSelect.value){
-        showError(attendanceDateError, 'Please pick a date.', attendanceDateSelect); return false;
+    // Submit
+    document.getElementById('submitBtn').addEventListener('click', () => {
+      if (!(data.fullName && data.phone && data.attendanceDate)) {
+        alert('Some details are incomplete. Please tap “Edit details”.');
+        return;
       }
-      clearError(attendanceDateError, attendanceDateSelect); return true;
-    };
-
-    const validateGuestCount = () => {
-      // If "Unable to Join" is selected, guest count is not required
-      if(attendanceDateSelect.value === 'unable'){ clearError(guestCountError, guestCountSelect); return true; }
-      if(!guestCountSelect.value){
-        showError(guestCountError, 'Please choose 1–4 pax.', guestCountSelect); return false;
-      }
-      clearError(guestCountError, guestCountSelect); return true;
-    };
-
-    function toggleGuestRequired(){
-      const unable = attendanceDateSelect.value === 'unable';
-      guestBlock.style.display = unable ? 'none' : '';
-      // Toggle required attribute dynamically
-      guestCountSelect.required = !unable;
-    }
-
-    // ---- Live validation & persistence on change ----
-    fullNameInput.addEventListener('input', () => { validateFullName(); set('fullName', fullNameInput.value.trim()); });
-    phoneInput.addEventListener('input', () => { validatePhone(); set('phone', phoneInput.value.trim()); });
-    attendanceDateSelect.addEventListener('change', () => { validateAttendanceDate(); toggleGuestRequired(); set('attendanceDate', attendanceDateSelect.value); });
-    guestCountSelect.addEventListener('change', () => { validateGuestCount(); set('guestCount', guestCountSelect.value); });
-
-    // ---- Submit ----
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      const ok =
-        validateFullName() &
-        validatePhone() &
-        validateAttendanceDate() &
-        validateGuestCount();
-
-      if(ok){
-        // Persist once more on submit (in case user didn't type/change after prefill)
-        set('fullName', fullNameInput.value.trim());
-        set('phone', phoneInput.value.trim());
-        set('attendanceDate', attendanceDateSelect.value);
-        set('guestCount', guestCountSelect.value);
-
-        // If "Unable to Join" → go straight to thank-you. Else go to Step 2 (allergies/message)
-        if(attendanceDateSelect.value === 'unable'){
-          window.location.href = 'form-gior-thankyou.html';
-        }else{
-          window.location.href = 'form-gior-step-2.html';
-        }
-      }
+      sessionStorage.setItem('confirmed', 'true');
+      // TODO: POST to backend here if needed.
+      window.location.href = 'form-gior-thankyou.html';
     });
   </script>
 </body>
