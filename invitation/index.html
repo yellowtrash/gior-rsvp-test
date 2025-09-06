@@ -2,7 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- Better viewport for iOS safe areas -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<style>
+  /* Use dynamic viewport when available */
+  .h-visual { height: 100dvh; }
+
+  /* Fallback for browsers without dvh (older iOS Safari) */
+  @supports not (height: 100dvh) {
+    :root { --vh: 1vh; }
+    .h-visual { height: calc(var(--vh) * 100); }
+  }
+
+  /* Keep your safe-area padding helper */
+  .safe-bottom { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+</style>
+
+<script>
+  // Only needed for the fallback: set --vh to the real innerHeight
+  (function () {
+    function setVh() {
+      document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+    }
+    setVh();
+    window.addEventListener('resize', setVh);
+    window.addEventListener('orientationchange', setVh);
+  })();
+</script>
+
   <title>GIOR - Exclusive Food Tasting Invitation</title>
 
   <!-- Tailwind CSS -->
@@ -32,7 +60,7 @@
 
 <body class="bg-black min-h-screen flex items-center justify-center p-4 antialiased">
   <!-- Device frame -->
-  <div class="mobile-view-container w-full max-w-[420px] h-[844px] flex flex-col rounded-2xl overflow-hidden shadow-2xl">
+  <div class="mobile-view-container w-full max-w-[420px] h-visual flex flex-col rounded-2xl overflow-hidden shadow-2xl">
     <!-- Full-height column to anchor content at the bottom -->
     <div class="flex h-full flex-col p-8 text-white overflow-y-auto">
       <!-- Header -->
