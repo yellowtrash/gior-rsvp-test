@@ -2,160 +2,148 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <!-- Better viewport for iOS safe areas -->
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-<style>
-  /* Use dynamic viewport when available */
-  .h-visual { height: 100dvh; }
-
-  /* Fallback for browsers without dvh (older iOS Safari) */
-  @supports not (height: 100dvh) {
-    :root { --vh: 1vh; }
-    .h-visual { height: calc(var(--vh) * 100); }
-  }
-
-  /* Keep your safe-area padding helper */
-  .safe-bottom { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
-</style>
-
-<script>
-  // Only needed for the fallback: set --vh to the real innerHeight
-  (function () {
-    function setVh() {
-      document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-    }
-    setVh();
-    window.addEventListener('resize', setVh);
-    window.addEventListener('orientationchange', setVh);
-  })();
-</script>
-
-  <title>GIOR - Review & Submit</title>
-
-  <!-- Tailwind CSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>GIOR - Reservation Form (Step 1)</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Google Fonts: DM Sans -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
   <style>
     body { font-family: 'DM Sans', sans-serif; }
-    /* Keep this exact background image filename (intentional typo) */
     .mobile-view-container{
       background-image:
         linear-gradient(to top, rgba(0,0,0,.8) 0%, rgba(0,0,0,.2) 60%),
         url('../imgs/img_gior_formresvp.jpg');
-      background-size: cover;
-      background-position: center;
+      background-size: cover; background-position: center;
     }
-    /* Safe area padding for iOS bottom inset */
+    .h-visual { height: 100dvh; }
+    @supports not (height: 100dvh) { :root{--vh:1vh;} .h-visual{height:calc(var(--vh)*100);} }
     .safe-bottom { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+    .safe-top { padding-top: max(12px, env(safe-area-inset-top)); }
+
+    .form-element{ background:#fff;color:#333;border-radius:8px;padding:12px 16px;border:1px solid transparent;width:100%;font-size:16px;transition:border-color .2s;appearance:none; }
+    .form-element:focus{ outline:none;border-color:#B08018; box-shadow:0 0 0 2px rgba(176,128,24,.3); }
+    .form-element::placeholder{ color:#9CA3AF; } .form-element.invalid{ border-color:#EF4444; }
+    .form-element.invalid:focus{ box-shadow:0 0 0 2px rgba(239,68,68,.3); }
+    .select-wrapper{ position:relative; }
+    .select-wrapper::after{ content:'▼'; font-size:12px; color:#6B7280; position:absolute; right:16px; top:50%; transform:translateY(-50%); pointer-events:none; }
+    .error-message{ color:#F87171; font-size:14px; min-height:1em; margin-top:4px; }
   </style>
+  <script>(function(){function setVh(){document.documentElement.style.setProperty('--vh',(window.innerHeight*0.01)+'px');}
+    setVh();window.addEventListener('resize',setVh);window.addEventListener('orientationchange',setVh);}())</script>
 </head>
+<div class="md:max-w-[420px] md:mx-auto md:w-full md:h-full md:flex md:flex-col">
 
-<body class="bg-black min-h-screen flex items-center justify-center p-4 antialiased">
-  <div class="mobile-view-container w-full max-w-[420px] h-visual flex flex-col rounded-2xl overflow-hidden shadow-2xl">
-    <!-- Full-height column so CTA can pin at the bottom when no scroll -->
-    <div class="flex h-full flex-col p-8 text-white overflow-y-auto">
-      <header class="w-full flex justify-between items-center mb-8">
-        <button type="button" onclick="history.back()" class="p-2 rounded-full hover:bg-white/10 transition-colors duration-200" aria-label="Go back">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-          </svg>
-        </button>
-        <img src="../imgs/logo_gior.png" alt="GIOR Logo" class="h-8 w-auto opacity-90">
-      </header>
+<body class="mobile-view-container h-visual flex flex-col text-white antialiased">
+  <header class="safe-top px-6 flex justify-between items-center mb-6">
+    <button type="button" onclick="history.back()" class="p-2 rounded-full hover:bg-white/10 transition-colors" aria-label="Go back">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <img src="../imgs/logo_gior.png" alt="GIOR Logo" class="h-8 w-auto opacity-90">
+  </header>
 
-      <!-- Content grows; actions sit at bottom when content is short -->
-      <main class="flex-1">
-        <h1 class="text-2xl font-bold mb-2">Please review your details</h1>
-        <p class="text-white/80 mb-6">Make sure everything looks correct before submitting.</p>
+  <main class="flex-1 px-6 overflow-y-auto">
+    <h1 class="text-2xl font-bold mb-6">Tell us a few details</h1>
 
-        <!-- Glass summary card -->
-        <section class="bg-white/10 backdrop-blur-md ring-1 ring-white/15 rounded-2xl shadow-xl p-5">
-          <dl class="space-y-4">
-            <div>
-              <dt class="text-xs uppercase tracking-wide text-white/70">Full Name</dt>
-              <dd id="vFullName" class="text-base font-medium text-white break-words mt-1">—</dd>
-            </div>
-            <div>
-              <dt class="text-xs uppercase tracking-wide text-white/70">Phone Number</dt>
-              <dd id="vPhone" class="text-base font-medium text-white break-words mt-1">—</dd>
-            </div>
-            <div>
-              <dt class="text-xs uppercase tracking-wide text-white/70">Attendance Date</dt>
-              <dd id="vDate" class="text-base font-medium text-white break-words mt-1">—</dd>
-            </div>
-            <div>
-              <dt class="text-xs uppercase tracking-wide text-white/70">Number of Guests</dt>
-              <dd id="vGuests" class="text-base font-medium text-white break-words mt-1">—</dd>
-            </div>
-            <div>
-              <dt class="text-xs uppercase tracking-wide text-white/70">Allergies / Dietary Restriction</dt>
-              <dd id="vAllergies" class="text-base font-medium text-white whitespace-pre-wrap break-words mt-1">—</dd>
-            </div>
-          </dl>
-        </section>
-
-        <p class="text-white/70 text-sm mt-4">
-          If everything looks correct, kindly click submit to confirm your attendance.
-        </p>
-      </main>
-
-      <!-- Actions stacked at the bottom -->
-      <div class="mt-auto safe-bottom space-y-3">
-        <!-- Link-only edit (above submit) -->
-        <a href="form-gior-step-1.html" class="text-white/80 hover:text-white text-sm underline underline-offset-2">
-          Edit details
-        </a>
-
-        <!-- Primary submit button -->
-        <button id="submitBtn" type="button"
-          class="w-full flex items-center justify-center bg-[#B08018] text-white text-base py-4 px-6 rounded-lg font-semibold hover:bg-[#9a6f15] transition-colors duration-300">
-          SUBMIT
-        </button>
+    <form id="reservationForm" class="space-y-6" novalidate>
+      <div>
+        <label for="fullName" class="block text-sm font-medium mb-2">Full Name <span class="opacity-80">(required)</span></label>
+        <input id="fullName" class="form-element" placeholder="Your full name" required>
+        <div id="fullNameError" class="error-message"></div>
       </div>
-    </div>
+
+      <div>
+        <label for="phone" class="block text-sm font-medium mb-2">Phone Number <span class="opacity-80">(required)</span></label>
+        <input id="phone" type="tel" class="form-element" placeholder="e.g., 081234567890" required>
+        <div id="phoneError" class="error-message"></div>
+      </div>
+
+      <div>
+        <label for="attendanceDate" class="block text-sm font-medium mb-2">Select your attendance date</label>
+        <div class="select-wrapper">
+          <select id="attendanceDate" class="form-element" required>
+            <option value="">Pick a date</option>
+            <option value="22-sept">22 Sept</option><option value="23-sept">23 Sept</option>
+            <option value="24-sept">24 Sept</option><option value="25-sept">25 Sept</option>
+            <option value="unable">Unable to Join</option>
+          </select>
+        </div>
+        <div id="attendanceDateError" class="error-message"></div>
+      </div>
+
+      <div id="guestBlock">
+        <label for="guestCount" class="block text-sm font-medium mb-2">Number of guests attending (including yourself)</label>
+        <div class="select-wrapper">
+          <select id="guestCount" class="form-element" required>
+            <option value="">Choose 1–4 pax</option>
+            <option value="1">1 pax</option><option value="2">2 pax</option>
+            <option value="3">3 pax</option><option value="4">4 pax</option>
+          </select>
+        </div>
+        <div id="guestCountError" class="error-message"></div>
+      </div>
+    </form>
+  </main>
+
+  <div class="mt-auto px-6 safe-bottom">
+    <a href="#" id="nextBtn"
+       class="w-full flex items-center justify-center bg-[#B08018] text-white text-base py-4 px-6 rounded-lg font-semibold hover:bg-[#9a6f15] transition-colors duration-300 text-center">
+      NEXT
+    </a>
   </div>
 
   <script>
-    // Helpers: sessionStorage + optional query fallback
-    function qs(key){ return new URL(window.location.href).searchParams.get(key); }
-    function get(key){ return sessionStorage.getItem(key) ?? qs(key) ?? ''; }
+    const fullNameInput = document.getElementById('fullName');
+    const phoneInput = document.getElementById('phone');
+    const attendanceDateSelect = document.getElementById('attendanceDate');
+    const guestCountSelect = document.getElementById('guestCount');
+    const guestBlock = document.getElementById('guestBlock');
+    const nextBtn = document.getElementById('nextBtn');
 
-    // Mappers
-    const mapDate = v => ({'22-sept':'22 Sept','23-sept':'23 Sept','24-sept':'24 Sept','25-sept':'25 Sept','unable':'Unable to Join'}[v] || v || '—');
-    const mapGuests = v => (v ? `${v} pax` : '—');
+    const fullNameError = document.getElementById('fullNameError');
+    const phoneError = document.getElementById('phoneError');
+    const attendanceDateError = document.getElementById('attendanceDateError');
+    const guestCountError = document.getElementById('guestCountError');
 
-    // Gather data
-    const data = {
-      fullName: get('fullName') || get('name'),
-      phone: get('phone'),
-      attendanceDate: get('attendanceDate') || get('date'),
-      guestCount: get('guestCount'),
-      allergies: get('allergies') || ''
-    };
+    const get = (k)=>sessionStorage.getItem(k)??''; const set=(k,v)=>sessionStorage.setItem(k,v);
 
-    // Populate UI
-    document.getElementById('vFullName').textContent = data.fullName || '—';
-    document.getElementById('vPhone').textContent = data.phone || '—';
-    document.getElementById('vDate').textContent = mapDate(data.attendanceDate);
-    document.getElementById('vGuests').textContent = mapGuests(data.guestCount);
-    document.getElementById('vAllergies').textContent = (data.allergies.trim() || '—');
+    function prefill(){
+      if(get('fullName')) fullNameInput.value = get('fullName');
+      if(get('phone')) phoneInput.value = get('phone');
+      if(get('attendanceDate')) attendanceDateSelect.value = get('attendanceDate');
+      if(get('guestCount')) guestCountSelect.value = get('guestCount');
+      toggleGuestRequired();
+    }
+    document.addEventListener('DOMContentLoaded', prefill);
 
-    // Submit
-    document.getElementById('submitBtn').addEventListener('click', () => {
-      if (!(data.fullName && data.phone && data.attendanceDate)) {
-        alert('Some details are incomplete. Please tap “Edit details”.');
-        return;
+    function showError(el,msg,input){ el.textContent=msg; if(input) input.classList.add('invalid'); }
+    function clearError(el,input){ el.textContent=''; if(input) input.classList.remove('invalid'); }
+
+    const validateFullName=()=>{const v=fullNameInput.value.trim(); if(!v){showError(fullNameError,'Full name is required.',fullNameInput);return false;} clearError(fullNameError,fullNameInput);return true;};
+    const validatePhone=()=>{let v=phoneInput.value.replace(/[^0-9]/g,''); phoneInput.value=v; if(!v){showError(phoneError,'Phone number is required.',phoneInput);return false;} if(v.length<9||v.length>14){showError(phoneError,'Phone must be 9–14 digits.',phoneInput);return false;} clearError(phoneError,phoneInput);return true;};
+    const validateAttendanceDate=()=>{if(!attendanceDateSelect.value){showError(attendanceDateError,'Please pick a date.',attendanceDateSelect);return false;} clearError(attendanceDateError,attendanceDateSelect);return true;};
+    const validateGuestCount=()=>{if(attendanceDateSelect.value==='unable'){clearError(guestCountError,guestCountSelect);return true;} if(!guestCountSelect.value){showError(guestCountError,'Please choose 1–4 pax.',guestCountSelect);return false;} clearError(guestCountError,guestCountSelect);return true;};
+
+    function toggleGuestRequired(){const unable=attendanceDateSelect.value==='unable'; guestBlock.style.display=unable?'none':''; guestCountSelect.required=!unable;}
+
+    fullNameInput.addEventListener('input',()=>{validateFullName(); set('fullName',fullNameInput.value.trim());});
+    phoneInput.addEventListener('input',()=>{validatePhone(); set('phone',phoneInput.value.trim());});
+    attendanceDateSelect.addEventListener('change',()=>{validateAttendanceDate(); toggleGuestRequired(); set('attendanceDate',attendanceDateSelect.value);});
+    guestCountSelect.addEventListener('change',()=>{validateGuestCount(); set('guestCount',guestCountSelect.value);});
+
+    nextBtn.addEventListener('click',(e)=>{
+      e.preventDefault();
+      const ok = validateFullName() & validatePhone() & validateAttendanceDate() & validateGuestCount();
+      if(ok){
+        set('fullName',fullNameInput.value.trim());
+        set('phone',phoneInput.value.trim());
+        set('attendanceDate',attendanceDateSelect.value);
+        set('guestCount',guestCountSelect.value);
+        if(attendanceDateSelect.value==='unable'){ window.location.href='form-gior-confirmation.html'; }
+        else{ window.location.href='form-gior-step-2.html'; }
       }
-      sessionStorage.setItem('confirmed', 'true');
-      // TODO: POST to backend here if needed.
-      window.location.href = 'form-gior-thankyou.html';
     });
   </script>
+</div>
 </body>
 </html>
